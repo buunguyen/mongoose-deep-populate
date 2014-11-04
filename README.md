@@ -1,4 +1,4 @@
-By default, Mongoose only supports populating nested models at one level depth. This plugin makes it very simple to populate nested models at any level of depth.
+By default, Mongoose only supports populating nested models at one level of depth. This plugin makes it very simple to populate nested models at any level of depth.
 
 ### Installation
 ```
@@ -68,7 +68,7 @@ post.deepPopulate(['comments.user', 'user', 'likes.user', 'approved.user']', cb)
 
 #### Specify options
 
-If you allow an API client to specify population paths, you should restrict the paths to a whitelist to avoid performance and security problems:
+If you allow an API client to specify population paths, you should whitelist the paths to prevent performance and security problems:
 
 ```javascript
 PostSchema.plugin(deepPopulate, {
@@ -79,7 +79,7 @@ PostSchema.plugin(deepPopulate, {
 });
 ```
 
-You can also enable path rewriting to make the public-facing APIs more developer-friendly.  For example:
+You can also enable path rewriting to make the public-facing APIs more user-friendly.  For example:
 
 ```javascript
 PostSchema.plugin(deepPopulate, {
