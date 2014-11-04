@@ -63,7 +63,7 @@ post.deepPopulate('user, comments.user, likes.user, approved.user', cb);
 Or use an array of strings:
 
 ```javascript
-post.deepPopulate(['comments.user', 'user', 'likes.user', 'approved.user']', cb);
+post.deepPopulate(['comments.user', 'user', 'likes.user', 'approved.user'], cb);
 ```
 
 #### Specify options
