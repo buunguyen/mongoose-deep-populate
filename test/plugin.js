@@ -2,7 +2,7 @@ var expect        = require('chai').expect
   , async         = require('async')
   , mongoose      = require('mongoose')
   , Schema        = mongoose.Schema
-  , includePlugin = require('../index')
+  , deepPopulate = require('../index')
 
 describe('mongoose-deep-populate', function () {
   var UserSchema, User
@@ -168,7 +168,7 @@ describe('mongoose-deep-populate', function () {
       likes   : [{user: {type: Number, ref: 'User' + modelVersion}}], // subdocs
       approved: {status: Boolean, user: {type: Number, ref: 'User' + modelVersion}} // subdoc
     })
-    PostSchema.plugin(includePlugin, options)
+    PostSchema.plugin(deepPopulate, options)
     Post = connection.model('Post' + modelVersion, PostSchema)
 
     async.parallel([
