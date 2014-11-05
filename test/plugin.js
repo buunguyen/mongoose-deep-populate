@@ -80,6 +80,22 @@ describe('mongoose-deep-populate', function () {
           cb()
         })
       })
+
+      it('ignores null path', function (cb) {
+        populateFn(null, cb)
+      })
+
+      it('ignores null callback', function (cb) {
+        if (type === 'static') {
+          Post.deepPopulate()
+          cb()
+        }
+        else Post.findOne({}, function (err, post) {
+          if (err) return cb(err)
+          post.deepPopulate()
+          cb()
+        })
+      })
     })
 
     describe(type + ' Using whitelist option', function () {
