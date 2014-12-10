@@ -98,7 +98,7 @@ post.deepPopulate(req.query.populate, cb);
 To run tests, execute the following command. Note that you need a test database (don't reuse an existing database as the test will delete it every run).
 
 ```
-gulp test -db mongodb://localhost/test_db
+gulp test --db mongodb://localhost/test_db
 ```
 
 ### License
