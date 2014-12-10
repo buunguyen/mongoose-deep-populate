@@ -158,7 +158,7 @@ describe('mongoose-deep-populate', function () {
     describe(type + ' Using populate options', function () {
       before(function (cb) {
         setup(cb, {
-          options: {
+          populate: {
             comments       : {
               select : 'user',
               options: {
@@ -189,24 +189,14 @@ describe('mongoose-deep-populate', function () {
       before(function (cb) {
         setup(cb, {
           whitelist: [],
-          options: {
-            comments       : {
-              select : 'loaded',
-              options: {
-                limit: 2
-              }
-            },
-            'comments.user': {
-              select: 'loaded'
-            }
-          }
+          populate: {}
         })
       })
 
       it('use overriding options', function (cb) {
         var overridingOpts = {
           whitelist: ['comments.user'],
-          options: {
+          populate: {
             comments       : {
               select : 'user',
               options: {

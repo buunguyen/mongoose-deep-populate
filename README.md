@@ -68,7 +68,7 @@ post.deepPopulate(['comments.user', 'user', 'likes.user', 'approved.user'], cb);
 
 #### Specify options
 
-If you allow an API client to specify population paths, you should whitelist the paths to prevent performance and security problems:
+Specify `whitelist` option to prevent performance and security issues.
 
 ```javascript
 PostSchema.plugin(deepPopulate, {
@@ -79,7 +79,7 @@ PostSchema.plugin(deepPopulate, {
 });
 ```
 
-You can also enable path rewriting to make the public-facing APIs more user-friendly.  For example:
+Use `rewrite` option to rewrite provided paths. This is useful when you allow API clients to specify paths and want to make these paths more user-friendly. For example:
 
 ```javascript
 PostSchema.plugin(deepPopulate, {
@@ -93,11 +93,11 @@ PostSchema.plugin(deepPopulate, {
 post.deepPopulate(req.query.populate, cb);  
 ```
 
-The plugin also supports [Mongoose populate options](http://mongoosejs.com/docs/api.html#model_Model.populate).
+Use the `populate` option to supply paths with corresponding [Mongoose populate options](http://mongoosejs.com/docs/api.html#model_Model.populate).
 
 ```javascript
 PostSchema.plugin(deepPopulate, {
-  options: {
+  populate: {
     'comments.user': {
       select: 'name',
       options: {
@@ -111,17 +111,26 @@ PostSchema.plugin(deepPopulate, {
 });
 ```
 
-Finally, you can specify options when invoking `deepPopulate`. These options will override the default plugin options.
+Finally, you can override the above plugin options when invoking `deepPopulate`.
  
 ```javascript
-Post.deepPopulate(posts, paths, options, cb)
-post.deepPopulate(paths, options, cb);
+Post.deepPopulate(posts, paths, {
+  whitelist: [],
+  rewrite: {},
+  populate: {}
+}, cb)
+
+post.deepPopulate(paths, {
+  whitelist: [],
+  rewrite: {},
+  populate: {}
+}, cb);
 ```
 
 
 ### Test
 
-To run tests, execute the following command. Note that you need a test database (don't reuse an existing database as the test will delete it every run).
+To run tests, execute the following command. Note that you need a test database (don't reuse an existing database as the test will drop it every run).
 
 ```
 gulp test --db mongodb://localhost/test_db
