@@ -1,6 +1,6 @@
 {
   "name": "mongoose-deep-populate",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Mongoose plugin to enable deep population of nested models",
   "keywords": [
     "mongodb",

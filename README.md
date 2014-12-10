@@ -93,6 +93,32 @@ PostSchema.plugin(deepPopulate, {
 post.deepPopulate(req.query.populate, cb);  
 ```
 
+The plugin also supports [Mongoose populate options](http://mongoosejs.com/docs/api.html#model_Model.populate).
+
+```javascript
+PostSchema.plugin(deepPopulate, {
+  options: {
+    'comments.user': {
+      select: 'name',
+      options: {
+        limit: 5
+      }
+    },
+    'approved.user': {
+      select: 'name'
+    }
+  }
+});
+```
+
+Finally, you can specify options when invoking `deepPopulate`. These options will override the default plugin options.
+ 
+```javascript
+Post.deepPopulate(posts, paths, options, cb)
+post.deepPopulate(paths, options, cb);
+```
+
+
 ### Test
 
 To run tests, execute the following command. Note that you need a test database (don't reuse an existing database as the test will delete it every run).

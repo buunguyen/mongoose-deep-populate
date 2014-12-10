@@ -1,7 +1,7 @@
-var expect        = require('chai').expect
-  , async         = require('async')
-  , mongoose      = require('mongoose')
-  , Schema        = mongoose.Schema
+var expect       = require('chai').expect
+  , async        = require('async')
+  , mongoose     = require('mongoose')
+  , Schema       = mongoose.Schema
   , deepPopulate = require('../index')
 
 describe('mongoose-deep-populate', function () {
@@ -98,7 +98,7 @@ describe('mongoose-deep-populate', function () {
       })
     })
 
-    describe(type + ' Using whitelist option', function () {
+    describe(type + ' Using whitelist', function () {
       before(function (cb) {
         setup(cb, {
           whitelist: ['comments']
@@ -135,7 +135,7 @@ describe('mongoose-deep-populate', function () {
       })
     })
 
-    describe(type + ' Using rewrite option', function () {
+    describe(type + ' Using rewriting', function () {
       before(function (cb) {
         setup(cb, {
           rewrite: {
@@ -155,12 +155,12 @@ describe('mongoose-deep-populate', function () {
       })
     })
 
-    describe(type + ' Using populate options option', function () {
+    describe(type + ' Using populate options', function () {
       before(function (cb) {
         setup(cb, {
           options: {
-            comments: {
-              select: 'user',
+            comments       : {
+              select : 'user',
               options: {
                 limit: 1
               }
@@ -172,8 +172,54 @@ describe('mongoose-deep-populate', function () {
         })
       })
 
-      it('uses populate options for corresponding paths', function (cb) {
+      it('applies populate options for corresponding paths', function (cb) {
         populateFn('comments.user', function (err, post) {
+          if (err) return cb(err)
+          expect(post.comments.length).to.equal(1)
+          post.comments.forEach(function (comment) {
+            expect(comment.loaded).to.be.undefined
+            expect(comment.user.loaded).to.be.undefined
+          })
+          cb()
+        })
+      })
+    })
+
+    describe(type + ' Overriding options', function () {
+      before(function (cb) {
+        setup(cb, {
+          whitelist: [],
+          options: {
+            comments       : {
+              select : 'loaded',
+              options: {
+                limit: 2
+              }
+            },
+            'comments.user': {
+              select: 'loaded'
+            }
+          }
+        })
+      })
+
+      it('use overriding options', function (cb) {
+        var overridingOpts = {
+          whitelist: ['comments.user'],
+          options: {
+            comments       : {
+              select : 'user',
+              options: {
+                limit: 1
+              }
+            },
+            'comments.user': {
+              select: 'manager'
+            }
+          }
+        }
+
+        populateFn('comments.user', overridingOpts, function (err, post) {
           if (err) return cb(err)
           expect(post.comments.length).to.equal(1)
           post.comments.forEach(function (comment) {
@@ -230,23 +276,39 @@ describe('mongoose-deep-populate', function () {
 
   function eachPopulationType(cb) {
     var populationTypes = {
-      '[static]': function (paths, cb) {
+      '[static]': function (paths, options, cb) {
+        if (cb == null) {
+          cb = options
+          options = null
+        }
+
         Post.find({}, function (err, posts) {
           if (err) return cb(err)
-          Post.deepPopulate(posts, paths, function (err, _posts) {
+          if (options) Post.deepPopulate(posts, paths, options, done)
+          else Post.deepPopulate(posts, paths, done)
+
+          function done(err, _posts) {
             if (err) return cb(err)
             cb(null, posts[0], _posts[0])
-          })
+          }
         })
       },
 
-      '[instance]': function (paths, cb) {
+      '[instance]': function (paths, options, cb) {
+        if (cb == null) {
+          cb = options
+          options = null
+        }
+
         Post.findOne({}, function (err, post) {
           if (err) return cb(err)
-          post.deepPopulate(paths, function (err, _post) {
+          if (options) post.deepPopulate(paths, options, done)
+          else post.deepPopulate(paths, done)
+
+          function done(err, _post) {
             if (err) return cb(err)
             cb(null, post, _post)
-          })
+          }
         })
       }
     }
