@@ -154,6 +154,36 @@ describe('mongoose-deep-populate', function () {
         })
       })
     })
+
+    describe(type + ' Using populate options option', function () {
+      before(function (cb) {
+        setup(cb, {
+          options: {
+            comments: {
+              select: 'user',
+              options: {
+                limit: 1
+              }
+            },
+            'comments.user': {
+              select: 'manager'
+            }
+          }
+        })
+      })
+
+      it('uses populate options for corresponding paths', function (cb) {
+        populateFn('comments.user', function (err, post) {
+          if (err) return cb(err)
+          expect(post.comments.length).to.equal(1)
+          post.comments.forEach(function (comment) {
+            expect(comment.loaded).to.be.undefined
+            expect(comment.user.loaded).to.be.undefined
+          })
+          cb()
+        })
+      })
+    })
   })
 
   // Helpers
