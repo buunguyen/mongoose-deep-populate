@@ -222,6 +222,26 @@ describe('mongoose-deep-populate', function () {
     })
   })
 
+
+
+  describe('[static] Null handling', function () {
+    before(setup)
+
+    it('ignores null docs', function (cb) {
+      Post.deepPopulate(null, 'comments', function (err, docs) {
+        expect(docs).to.be.null
+        cb()
+      })
+    })
+
+    it('ignores empty docs', function (cb) {
+      Post.deepPopulate([], 'comments', function (err, docs) {
+        expect(docs.length).to.equal(0)
+        cb()
+      })
+    })
+  })
+
   // Helpers
   function setup(cb, options) {
     var dbUrl = process.env.MONGOOSE_INCLUDE_TEST_DB
