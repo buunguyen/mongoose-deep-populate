@@ -57,8 +57,16 @@ describe('mongoose-deep-populate', function () {
         })
       })
 
-      it('supports multiple paths', function (cb) {
-        populateFn('user.manager, comments.user.manager, approved.user.manager, likes.user.manager', function (err, post) {
+      it('supports multiple paths using space-delimited string', function (cb) {
+        populateFn('user.manager comments.user.manager  approved.user.manager   likes.user.manager', function (err, post) {
+          if (err) return cb(err)
+          checkPost(post)
+          cb()
+        })
+      })
+
+      it('supports multiple paths using comma-delimited string', function (cb) {
+        populateFn('user.manager,comments.user.manager,approved.user.manager,likes.user.manager', function (err, post) {
           if (err) return cb(err)
           checkPost(post)
           cb()
@@ -74,7 +82,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('ignores invalid paths', function (cb) {
-        populateFn('invalid1, invalid2.invalid3, user', function (err, post) {
+        populateFn('invalid1 invalid2.invalid3 user', function (err, post) {
           if (err) return cb(err)
           check(post.user, true)
           cb()
@@ -146,7 +154,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('rewrites and populates paths', function (cb) {
-        populateFn('author, approved', function (err, post) {
+        populateFn('author approved', function (err, post) {
           if (err) return cb(err)
           check(post.user, true)
           check(post.approved.user, true)

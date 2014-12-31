@@ -55,10 +55,10 @@ Post.deepPopulate(posts, 'comments.user', function (err) {
 
 #### Populate multiple paths
 
-Pass paths in a comma-delimited string:
+Pass paths in a space-delimited string:
 
 ```javascript
-post.deepPopulate('user, comments.user, likes.user, approved.user', cb);
+post.deepPopulate('user comments.user likes.user approved.user', cb);
 ```
 Or use an array of strings:
 
@@ -135,6 +135,9 @@ To run tests, execute the following command. Note that you need a test database 
 ```
 gulp test --db mongodb://localhost/test_db
 ```
+
+### Changelog
+
 
 ### License
 
