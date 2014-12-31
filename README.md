@@ -55,7 +55,7 @@ Post.deepPopulate(posts, 'comments.user', function (err) {
 
 #### Populate multiple paths
 
-Pass paths in a space-delimited string:
+Pass paths in a space- or comma-delimited string:
 
 ```javascript
 post.deepPopulate('user comments.user likes.user approved.user', cb);
