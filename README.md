@@ -155,6 +155,16 @@ gulp test --db mongodb://localhost/test_db
 
 ### Changelog
 
+#### v0.0.6
+
+* [Feature] support populate options
+* [Feature] override options per call
+* [Bug] handle null paths and callback
+
+#### v0.0.1
+
+* Initial release
+
 
 ### License
 
