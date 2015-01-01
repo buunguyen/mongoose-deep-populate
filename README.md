@@ -35,14 +35,6 @@ This will make the method `deepPopulate` available in both `Post` and its instan
 
 #### Perform population
 
-On an instance of `Post`:
-
-```javascript
-post.deepPopulate('comments.user', function (err) {
-  // post.comments and post.comments.user are fully populated
-});
-```
-
 On `Post`:
 
 ```javascript
@@ -52,6 +44,25 @@ Post.deepPopulate(posts, 'comments.user', function (err) {
   });
 });
 ```
+
+On an instance of `Post`:
+
+```javascript
+post.deepPopulate('comments.user', function (err) {
+  // post.comments and post.comments.user are fully populated
+});
+```
+
+On `Query`:
+
+```javascript
+Post.find({}).deepPopulate('comments.user').exec(function (err, posts) {
+  posts.forEach(function (post) {
+    // post.comments and post.comments.user are fully populated
+  });
+});
+```
+
 
 #### Populate multiple paths
 
@@ -125,6 +136,12 @@ post.deepPopulate(paths, {
   rewrite: {},
   populate: {}
 }, cb);
+
+Post.find({}).deepPopulate(paths, {
+  whitelist: [],
+  rewrite: {},
+  populate: {}
+}).exec(cb)
 ```
 
 

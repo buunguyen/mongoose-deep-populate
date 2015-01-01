@@ -12,6 +12,45 @@ describe('mongoose-deep-populate', function () {
 
   eachPopulationType(function (type, populateFn) {
 
+    if (type === '[static]') {
+      describe(type + ' Null handling', function () {
+        before(setup)
+
+        it('ignores null docs', function (cb) {
+          Post.deepPopulate(null, 'comments', function (err, docs) {
+            expect(docs).to.be.null
+            cb()
+          })
+        })
+
+        it('ignores undefined docs', function (cb) {
+          Post.deepPopulate(undefined, 'comments', function (err, docs) {
+            expect(docs).to.be.undefined
+            cb()
+          })
+        })
+
+        it('ignores empty docs', function (cb) {
+          Post.deepPopulate([], 'comments', function (err, docs) {
+            expect(docs.length).to.equal(0)
+            cb()
+          })
+        })
+      })
+    }
+    else if (~type.indexOf('exec')) {
+      describe(type + ' Null handling', function () {
+        before(setup)
+
+        it('ignores no results', function (cb) {
+          Post.find({_id: 'not exist'}).deepPopulate(null, 'comments').exec(function (err, docs) {
+            expect(docs).to.be.undefined
+            cb()
+          })
+        })
+      })
+    }
+
     describe(type + ' Using default options', function () {
       before(setup)
 
@@ -230,26 +269,6 @@ describe('mongoose-deep-populate', function () {
     })
   })
 
-
-
-  describe('[static] Null handling', function () {
-    before(setup)
-
-    it('ignores null docs', function (cb) {
-      Post.deepPopulate(null, 'comments', function (err, docs) {
-        expect(docs).to.be.null
-        cb()
-      })
-    })
-
-    it('ignores empty docs', function (cb) {
-      Post.deepPopulate([], 'comments', function (err, docs) {
-        expect(docs.length).to.equal(0)
-        cb()
-      })
-    })
-  })
-
   // Helpers
   function setup(cb, options) {
     var dbUrl = process.env.MONGOOSE_INCLUDE_TEST_DB
@@ -328,6 +347,34 @@ describe('mongoose-deep-populate', function () {
             cb(null, post, _post)
           }
         })
+      },
+
+      '[exec-one]': function (paths, options, cb) {
+        if (cb == null) {
+          cb = options
+          options = null
+        }
+
+        Post.findOne({}).deepPopulate(paths, options).exec(done)
+
+        function done(err, _post) {
+          if (err) return cb(err)
+          cb(null, _post, _post)
+        }
+      },
+
+      '[exec-many]': function (paths, options, cb) {
+        if (cb == null) {
+          cb = options
+          options = null
+        }
+
+        Post.find({_id: 1}).deepPopulate(paths, options).exec(done)
+
+        function done(err, _posts) {
+          if (err) return cb(err)
+          cb(null, _posts[0], _posts[0])
+        }
       }
     }
 
