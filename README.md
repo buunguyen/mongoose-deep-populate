@@ -155,6 +155,11 @@ gulp test --db mongodb://localhost/test_db
 
 ### Changelog
 
+#### v0.0.7
+
+* [Feature] Add `deepPopulate` to `Query`
+* [Feature] Support space dilimiter in paths
+
 #### v0.0.6
 
 * [Feature] Support populate options
