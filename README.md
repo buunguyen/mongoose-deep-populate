@@ -24,18 +24,16 @@ var PostSchema = new Schema({
 })
 ```
 
-#### Install the plugin
+#### Register plugin
 
 ```javascript
 var deepPopulate = require('mongoose-deep-populate');
 PostSchema.plugin(deepPopulate, options /* more on options below */);
 ```
 
-This will make the method `deepPopulate` available in both `Post` and its instances.
-
 #### Perform population
 
-On `Post`:
+On `Post` model:
 
 ```javascript
 Post.deepPopulate(posts, 'comments.user', function (err) {
@@ -61,6 +59,12 @@ Post.find({}).deepPopulate('comments.user').exec(function (err, posts) {
     // post.comments and post.comments.user are fully populated
   });
 });
+```
+
+Or:
+
+```javascript
+Post.findOne({}).deepPopulate('comments.user').exec(function (err, post) { ... });
 ```
 
 
