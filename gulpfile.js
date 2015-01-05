@@ -26,7 +26,7 @@ gulp.task('test', ['dropdb'], function () {
 })
 
 gulp.task('dropdb', function (cb) {
-  var dbUrl = process.env.MONGOOSE_INCLUDE_TEST_DB = parseArgs(process.argv)['db']
+  var dbUrl = process.env.TEST_DB = parseArgs(process.argv)['db']
   if (!dbUrl) return cb(new Error('Full database URL must be specified via --db'));
   mongoose.connect(dbUrl, function (err) {
     if (err) return cb(err)

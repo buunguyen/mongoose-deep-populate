@@ -1,8 +1,7 @@
-var expect       = require('chai').expect
+var _            = require('lodash')
+  , expect       = require('chai').expect
   , async        = require('async')
-  , _            = require('lodash')
   , mongoose     = require('mongoose')
-  , Schema       = mongoose.Schema
   , deepPopulate = require('../index')
 
 describe('mongoose-deep-populate', function () {
@@ -312,7 +311,8 @@ describe('mongoose-deep-populate', function () {
 
   // Helpers
   function setup(cb, options) {
-    var dbUrl = process.env.MONGOOSE_INCLUDE_TEST_DB
+    var Schema = mongoose.Schema
+      , dbUrl = process.env.TEST_DB
       , connection = mongoose.createConnection(dbUrl)
       , modelVersion = ++nextModelVersion
 
@@ -342,13 +342,13 @@ describe('mongoose-deep-populate', function () {
     Post = connection.model('Post' + modelVersion, PostSchema)
 
     async.parallel([
-      function (cb) { User.create({_id: 1, manager: 2}, cb) },
-      function (cb) { User.create({_id: 2}, cb) },
-      function (cb) { Comment.create({_id: 1, user: 1}, cb) },
-      function (cb) { Comment.create({_id: 2, user: 1}, cb) },
-      function (cb) { Comment.create({_id: 3, user: 1}, cb) },
-      function (cb) { Post.create({_id: 1, user: 1, comments: [1, 2], likes: [{user: 1}], approved: {user: 1}}, cb) },
-      function (cb) { Post.create({_id: 2, user: 1, comments: [3], likes: [{user: 1}], approved: {user: 1}}, cb) },
+      User.create.bind(User, {_id: 1, manager: 2}),
+      User.create.bind(User, {_id: 2}),
+      Comment.create.bind(Comment, {_id: 1, user: 1}),
+      Comment.create.bind(Comment, {_id: 2, user: 1}),
+      Comment.create.bind(Comment, {_id: 3, user: 1}),
+      Post.create.bind(Post, {_id: 1, user: 1, comments: [1, 2], likes: [{user: 1}], approved: {user: 1}}),
+      Post.create.bind(Post, {_id: 2, user: 1, comments: [3], likes: [{user: 1}], approved: {user: 1}})
     ], cb)
   }
 
