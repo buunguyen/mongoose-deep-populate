@@ -42,6 +42,7 @@
     "gulp-rename": "^1.2.0",
     "jshint-stylish": "^1.0.0",
     "gulp-exit": "0.0.2",
-    "minimist": "^1.1.0"
+    "minimist": "^1.1.0",
+    "lodash": "^2.4.1"
   }
 }

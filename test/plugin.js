@@ -1,5 +1,6 @@
 var expect       = require('chai').expect
   , async        = require('async')
+  , _            = require('lodash')
   , mongoose     = require('mongoose')
   , Schema       = mongoose.Schema
   , deepPopulate = require('../index')
@@ -10,54 +11,94 @@ describe('mongoose-deep-populate', function () {
     , PostSchema, Post
     , nextModelVersion = 0
 
-  eachPopulationType(function (type, populateFn) {
+  describe('[static] Specific behaviors', function () {
+    before(setup)
 
-    if (type === '[static]') {
-      describe(type + ' Null handling', function () {
-        before(setup)
-
-        it('ignores null docs', function (cb) {
+    it('passes through null or empty documents', function (cb) {
+      async.parallel([
+        function (cb) {
           Post.deepPopulate(null, 'comments', function (err, docs) {
             expect(docs).to.be.null
             cb()
           })
-        })
-
-        it('ignores undefined docs', function (cb) {
+        },
+        function (cb) {
           Post.deepPopulate(undefined, 'comments', function (err, docs) {
             expect(docs).to.be.undefined
             cb()
           })
-        })
-
-        it('ignores empty docs', function (cb) {
-          Post.deepPopulate([], 'comments', function (err, docs) {
-            expect(docs.length).to.equal(0)
+        },
+        function (cb) {
+          var docs = []
+          Post.deepPopulate(docs, 'comments', function (err, _docs) {
+            expect(_docs).to.equal(docs)
             cb()
           })
+        }
+      ], cb)
+    })
+
+    it('populates the same document array', function (cb) {
+      Post.find({_id: 1}, function (err, docs) {
+        if (err) return cb(err)
+        Post.deepPopulate(docs, 'comments', function (err, _docs) {
+          if (err) return cb(err)
+          expect(_docs).to.equal(docs)
+          cb()
         })
       })
-    }
-    else if (~type.indexOf('exec')) {
-      describe(type + ' Null handling', function () {
-        before(setup)
+    })
+  })
 
-        it('ignores no results', function (cb) {
+  describe('[instance] Specific behaviors', function () {
+    before(setup)
+
+    it('populates the same document', function (cb) {
+      Post.findById(1, function (err, doc) {
+        if (err) return cb(err)
+        doc.deepPopulate('comments', function (err, _doc) {
+          if (err) return cb(err)
+          expect(_doc).to.equal(doc)
+          cb()
+        })
+      })
+    })
+  })
+
+  describe('[query] Specific behaviors', function () {
+    before(setup)
+
+    it('passes in undefined if no document is found', function (cb) {
+      async.waterfall([
+        function (cb) {
           Post.find({_id: 'not exist'}).deepPopulate(null, 'comments').exec(function (err, docs) {
             expect(docs).to.be.undefined
             cb()
           })
-        })
-      })
-    }
+        },
+        function (cb) {
+          Post.findOne({_id: 'not exist'}).deepPopulate(null, 'comments').exec(function (err, doc) {
+            expect(doc).to.be.undefined
+            cb()
+          })
+        },
+        function (cb) {
+          Post.findById('not exist').deepPopulate(null, 'comments').exec(function (err, doc) {
+            expect(doc).to.be.undefined
+            cb()
+          })
+        }
+      ], cb)
+    })
+  })
 
+  eachPopulationType(function (type, populateFn) {
     describe(type + ' Using default options', function () {
       before(setup)
 
       it('deeply populates a linked document', function (cb) {
-        populateFn('user.manager', function (err, post, _post) {
+        populateFn('user.manager', null, function (err, post) {
           if (err) return cb(err)
-          expect(post).to.equal(_post)
           check(post.user, true)
           check(post.user.manager, true)
           cb()
@@ -65,7 +106,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('deeply populates a document array', function (cb) {
-        populateFn('comments.user.manager', function (err, post) {
+        populateFn('comments.user.manager', null, function (err, post) {
           if (err) return cb(err)
           post.comments.forEach(function (comment) {
             check(comment, true)
@@ -77,7 +118,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('deeply populates a subdocument', function (cb) {
-        populateFn('approved.user.manager', function (err, post) {
+        populateFn('approved.user.manager', null, function (err, post) {
           if (err) return cb(err)
           check(post.approved.user, true)
           check(post.approved.user.manager, true)
@@ -86,7 +127,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('deeply populates a subdocument array', function (cb) {
-        populateFn('likes.user.manager', function (err, post) {
+        populateFn('likes.user.manager', null, function (err, post) {
           if (err) return cb(err)
           post.likes.forEach(function (like) {
             check(like.user, true)
@@ -97,7 +138,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('supports multiple paths using space-delimited string', function (cb) {
-        populateFn('user.manager comments.user.manager  approved.user.manager   likes.user.manager', function (err, post) {
+        populateFn('user.manager comments.user.manager  approved.user.manager   likes.user.manager', null, function (err, post) {
           if (err) return cb(err)
           checkPost(post)
           cb()
@@ -105,7 +146,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('supports multiple paths using comma-delimited string', function (cb) {
-        populateFn('user.manager,comments.user.manager,approved.user.manager,likes.user.manager', function (err, post) {
+        populateFn('user.manager,comments.user.manager,approved.user.manager,likes.user.manager', null, function (err, post) {
           if (err) return cb(err)
           checkPost(post)
           cb()
@@ -113,7 +154,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('supports multiple paths via array param', function (cb) {
-        populateFn(['user.manager', 'comments.user.manager', 'approved.user.manager', 'likes.user.manager'], function (err, post) {
+        populateFn(['user.manager', 'comments.user.manager', 'approved.user.manager', 'likes.user.manager'], null, function (err, post) {
           if (err) return cb(err)
           checkPost(post)
           cb()
@@ -121,7 +162,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('ignores invalid paths', function (cb) {
-        populateFn('invalid1 invalid2.invalid3 user', function (err, post) {
+        populateFn('invalid1 invalid2.invalid3 user', null, function (err, post) {
           if (err) return cb(err)
           check(post.user, true)
           cb()
@@ -129,7 +170,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('ignores null path', function (cb) {
-        populateFn(null, cb)
+        populateFn(null, null, cb)
       })
 
       it('ignores null callback', function (cb) {
@@ -153,7 +194,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('populates whitelisted paths', function (cb) {
-        populateFn('comments', function (err, post) {
+        populateFn('comments', null, function (err, post) {
           if (err) return cb(err)
           post.comments.forEach(function (comment) {
             check(comment, true)
@@ -163,7 +204,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('ignores nested non-whitelisted subpaths', function (cb) {
-        populateFn('comments.user', function (err, post) {
+        populateFn('comments.user', null, function (err, post) {
           if (err) return cb(err)
           post.comments.forEach(function (comment) {
             check(comment, true)
@@ -174,7 +215,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('ignores non-whitelisted paths', function (cb) {
-        populateFn('user', function (err, post) {
+        populateFn('user', null, function (err, post) {
           if (err) return cb(err)
           check(post.user)
           cb()
@@ -193,7 +234,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('rewrites and populates paths', function (cb) {
-        populateFn('author approved', function (err, post) {
+        populateFn('author approved', null, function (err, post) {
           if (err) return cb(err)
           check(post.user, true)
           check(post.approved.user, true)
@@ -220,7 +261,7 @@ describe('mongoose-deep-populate', function () {
       })
 
       it('applies populate options for corresponding paths', function (cb) {
-        populateFn('comments.user', function (err, post) {
+        populateFn('comments.user', null, function (err, post) {
           if (err) return cb(err)
           expect(post.comments.length).to.equal(1)
           post.comments.forEach(function (comment) {
@@ -312,69 +353,53 @@ describe('mongoose-deep-populate', function () {
   }
 
   function eachPopulationType(cb) {
+    function doneFn(cb) {
+      return function (err, obj) {
+        if (arguments.length === 2) {
+          if (err) return cb(err)
+          cb(null, _.isArray(obj) ? obj[0] : obj)
+        }
+        else cb(null, _.isArray(err) ? err[0] : err)
+      }
+    }
+
     var populationTypes = {
       '[static]': function (paths, options, cb) {
-        if (cb == null) {
-          cb = options
-          options = null
-        }
-
         Post.find({}, function (err, posts) {
           if (err) return cb(err)
-          if (options) Post.deepPopulate(posts, paths, options, done)
-          else Post.deepPopulate(posts, paths, done)
-
-          function done(err, _posts) {
-            if (err) return cb(err)
-            cb(null, posts[0], _posts[0])
-          }
+          Post.deepPopulate(posts, paths, options, doneFn(cb))
         })
       },
 
       '[instance]': function (paths, options, cb) {
-        if (cb == null) {
-          cb = options
-          options = null
-        }
-
         Post.findOne({}, function (err, post) {
           if (err) return cb(err)
-          if (options) post.deepPopulate(paths, options, done)
-          else post.deepPopulate(paths, done)
-
-          function done(err, _post) {
-            if (err) return cb(err)
-            cb(null, post, _post)
-          }
+          post.deepPopulate(paths, options, doneFn(cb))
         })
       },
 
-      '[exec-one]': function (paths, options, cb) {
-        if (cb == null) {
-          cb = options
-          options = null
-        }
-
-        Post.findOne({}).deepPopulate(paths, options).exec(done)
-
-        function done(err, _post) {
-          if (err) return cb(err)
-          cb(null, _post, _post)
-        }
+      '[query-one-callback]': function (paths, options, cb) {
+        Post.findOne({}).deepPopulate(paths, options).exec(doneFn(cb))
       },
 
-      '[exec-many]': function (paths, options, cb) {
-        if (cb == null) {
-          cb = options
-          options = null
-        }
+      '[query-one-promise]': function (paths, options, cb) {
+        Post.findOne({}).deepPopulate(paths, options).exec().then(doneFn(cb))
+      },
 
-        Post.find({_id: 1}).deepPopulate(paths, options).exec(done)
+      '[query-id-callback]': function (paths, options, cb) {
+        Post.findById(1).deepPopulate(paths, options).exec(doneFn(cb))
+      },
 
-        function done(err, _posts) {
-          if (err) return cb(err)
-          cb(null, _posts[0], _posts[0])
-        }
+      '[query-id-promise]': function (paths, options, cb) {
+        Post.findById(1).deepPopulate(paths, options).exec().then(doneFn(cb))
+      },
+
+      '[query-many-callback]': function (paths, options, cb) {
+        Post.find({_id: 1}).deepPopulate(paths, options).exec(doneFn(cb))
+      },
+
+      '[query-many-promise]': function (paths, options, cb) {
+        Post.find({_id: 1}).deepPopulate(paths, options).exec().then(doneFn(cb))
       }
     }
 
