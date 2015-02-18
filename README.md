@@ -94,20 +94,6 @@ PostSchema.plugin(deepPopulate, {
 });
 ```
 
-Use `rewrite` option to rewrite provided paths. This is useful when you allow API clients to specify paths and want to make these paths more user-friendly. For example:
-
-```javascript
-PostSchema.plugin(deepPopulate, {
-  rewrite: {
-    author: 'user',
-    approver: 'approved.user'
-  }
-});
-
-// assume the query string is: ?populate=author,approver
-post.deepPopulate(req.query.populate, cb);  
-```
-
 Use the `populate` option to supply paths with corresponding [Mongoose populate options](http://mongoosejs.com/docs/api.html#model_Model.populate).
 
 ```javascript
@@ -124,6 +110,20 @@ PostSchema.plugin(deepPopulate, {
     }
   }
 });
+```
+
+Use `rewrite` option to rewrite provided paths as well as paths in `whitelist` and `populate`. This is useful when you allow API clients to specify paths and want to make these paths more user-friendly. For example:
+
+```javascript
+PostSchema.plugin(deepPopulate, {
+  rewrite: {
+    author: 'user',
+    approver: 'approved.user'
+  }
+});
+
+// assume the query string is: ?populate=author,approver
+post.deepPopulate(req.query.populate, cb);  
 ```
 
 Finally, you can override the above plugin options when invoking `deepPopulate`.
@@ -158,6 +158,10 @@ gulp test --db mongodb://localhost/test_db
 ```
 
 ### Changelog
+
+#### v1.0.0
+
+* [Feature] Apply `rewrites` to `whitelist` and `populate`
 
 #### v0.0.7
 

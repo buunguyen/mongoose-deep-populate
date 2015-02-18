@@ -11,6 +11,9 @@ describe('mongoose-deep-populate', function () {
     , PostSchema, Post
     , nextModelVersion = 0
 
+  /*==============================================*
+   * Specific behaviors of static call pattern
+   *==============================================*/
   describe('[static] Specific behaviors', function () {
     before(setup)
 
@@ -50,6 +53,9 @@ describe('mongoose-deep-populate', function () {
     })
   })
 
+  /*==============================================*
+   * Specific behaviors of instance call pattern
+   *==============================================*/
   describe('[instance] Specific behaviors', function () {
     before(setup)
 
@@ -65,6 +71,9 @@ describe('mongoose-deep-populate', function () {
     })
   })
 
+  /*==============================================*
+   * Specific behaviors of Query call pattern
+   *==============================================*/
   describe('[query] Specific behaviors', function () {
     before(setup)
 
@@ -109,6 +118,9 @@ describe('mongoose-deep-populate', function () {
     })
   })
 
+  /*==============================================*
+   * Behaviors of all call patterns
+   *==============================================*/
   eachPopulationType(function (type, populateFn) {
     describe(type + ' Using default options', function () {
       before(setup)
@@ -240,26 +252,6 @@ describe('mongoose-deep-populate', function () {
       })
     })
 
-    describe(type + ' Using rewriting', function () {
-      before(function (cb) {
-        setup(cb, {
-          rewrite: {
-            author  : 'user',
-            approved: 'approved.user'
-          }
-        })
-      })
-
-      it('rewrites and populates paths', function (cb) {
-        populateFn('author approved', null, function (err, post) {
-          if (err) return cb(err)
-          check(post.user, true)
-          check(post.approved.user, true)
-          cb()
-        })
-      })
-    })
-
     describe(type + ' Using populate options', function () {
       before(function (cb) {
         setup(cb, {
@@ -282,9 +274,47 @@ describe('mongoose-deep-populate', function () {
           if (err) return cb(err)
           expect(post.comments.length).to.equal(1)
           post.comments.forEach(function (comment) {
-            expect(comment.loaded).to.be.undefined
-            expect(comment.user.loaded).to.be.undefined
+            check(comment)
+            check(comment.user)
           })
+          cb()
+        })
+      })
+    })
+
+    describe(type + ' Using rewriting', function () {
+      before(function (cb) {
+        setup(cb, {
+          rewrite: {
+            author  : 'user',
+            approved: 'approved.user'
+          },
+          whitelist: [
+            'author',
+            'approved'
+          ],
+          populate: {
+            author: {
+              select: '-manager -_id'
+            }
+          }
+        })
+      })
+
+      it('rewrites paths and whitelist', function (cb) {
+        populateFn('author approved', null, function (err, post) {
+          if (err) return cb(err)
+          check(post.user, true)
+          check(post.approved.user, true)
+          cb()
+        })
+      })
+
+      it('rewrites populate option paths', function (cb) {
+        populateFn('author', null, function (err, post) {
+          if (err) return cb(err)
+          check(post.user, true)
+          expect(post.user.manager && post.user._id).to.be.undefined
           cb()
         })
       })
@@ -318,8 +348,8 @@ describe('mongoose-deep-populate', function () {
           if (err) return cb(err)
           expect(post.comments.length).to.equal(1)
           post.comments.forEach(function (comment) {
-            expect(comment.loaded).to.be.undefined
-            expect(comment.user.loaded).to.be.undefined
+            check(comment)
+            check(comment.user)
           })
           cb()
         })
@@ -327,7 +357,9 @@ describe('mongoose-deep-populate', function () {
     })
   })
 
-  // Helpers
+  /*==============================================*
+   * Helpers
+   *==============================================*/
   function setup(cb, options) {
     var Schema = mongoose.Schema
       , dbUrl = process.env.TEST_DB
