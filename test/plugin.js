@@ -5,6 +5,7 @@ var _            = require('lodash')
   , deepPopulate = require('../index')
 
 describe('mongoose-deep-populate', function () {
+
   var UserSchema, User
     , CommentSchema, Comment
     , PostSchema, Post
@@ -70,23 +71,40 @@ describe('mongoose-deep-populate', function () {
     it('passes in undefined if no document is found', function (cb) {
       async.waterfall([
         function (cb) {
-          Post.find({_id: 'not exist'}).deepPopulate(null, 'comments').exec(function (err, docs) {
+          Post.find({_id: 'not exist'}).deepPopulate('comments').exec(function (err, docs) {
             expect(docs).to.be.undefined
             cb()
           })
         },
         function (cb) {
-          Post.findOne({_id: 'not exist'}).deepPopulate(null, 'comments').exec(function (err, doc) {
+          Post.findOne({_id: 'not exist'}).deepPopulate('comments').exec(function (err, doc) {
             expect(doc).to.be.undefined
             cb()
           })
         },
         function (cb) {
-          Post.findById('not exist').deepPopulate(null, 'comments').exec(function (err, doc) {
+          Post.findById('not exist').deepPopulate('comments').exec(function (err, doc) {
             expect(doc).to.be.undefined
             cb()
           })
         }
+      ], cb)
+    })
+
+    it('works with lean() as an example of Query method chaining', function (cb) {
+      async.parallel([
+        function withoutLean(cb) {
+          Post.findOne({}).deepPopulate('comments').exec(function (err, doc) {
+            expect(doc.constructor.name).to.equal('model')
+            cb()
+          })
+        },
+        function withLean(cb) {
+          Post.findOne({}).deepPopulate('comments').lean().exec(function (err, doc) {
+            expect(doc.constructor.name).to.equal('Object')
+            cb()
+          })
+        },
       ], cb)
     })
   })
