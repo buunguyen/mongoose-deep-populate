@@ -20,7 +20,7 @@ var PostSchema = new Schema({
   user    : {type: Number, ref: 'User'},
   comments: [{type: Number, ref: 'Comment'}],
   likes   : [{user: {type: Number, ref: 'User'}}],
-  approved: {status: Boolean, user: {type: Number, ref: 'User'}} 
+  approved: {status: Boolean, user: {type: Number, ref: 'User'}}
 })
 ```
 
@@ -36,7 +36,8 @@ PostSchema.plugin(deepPopulate, options /* more on options below */);
 On `Post` model:
 
 ```javascript
-Post.deepPopulate(posts, 'comments.user', function (err) {
+Post.deepPopulate(posts, 'comments.user', function (err, _posts) {
+  // _posts is the same instance as posts and provided for convenience
   posts.forEach(function (post) {
     // post.comments and post.comments.user are fully populated
   });
@@ -46,25 +47,17 @@ Post.deepPopulate(posts, 'comments.user', function (err) {
 On an instance of `Post`:
 
 ```javascript
-post.deepPopulate('comments.user', function (err) {
-  // post.comments and post.comments.user are fully populated
+post.deepPopulate('comments.user', function (err, _post) {
+  // _post is the same instance as post and provided for convenience
 });
 ```
 
 On `Query`:
 
 ```javascript
-Post.find({}).deepPopulate('comments.user').exec(function (err, posts) {
-  posts.forEach(function (post) {
-    // post.comments and post.comments.user are fully populated
-  });
-});
-```
-
-Or:
-
-```javascript
-Post.findOne({}).deepPopulate('comments.user').exec(function (err, post) { ... });
+Post.find().deepPopulate('comments.user').exec(function (err, posts) { ... });
+Post.findOne().deepPopulate('comments.user').exec(function (err, post) { ... });
+Post.findById(id).deepPopulate('comments.user').exec(function (err, post) { ... });
 ```
 
 
@@ -83,13 +76,13 @@ post.deepPopulate(['comments.user', 'user', 'likes.user', 'approved.user'], cb);
 
 #### Specify options
 
-Specify `whitelist` option to prevent performance and security issues.
+Specify `whitelist` option to ensure only certain paths can be populated. This is to prevent potential performance and security issues if you allow API clients to supply population paths.
 
 ```javascript
 PostSchema.plugin(deepPopulate, {
   whitelist: [
     'user',
-    'comments.user' 
+    'comments.user'
   ]
 });
 ```
@@ -112,7 +105,7 @@ PostSchema.plugin(deepPopulate, {
 });
 ```
 
-Use `rewrite` option to rewrite provided paths as well as paths in `whitelist` and `populate`. This is useful when you allow API clients to specify paths and want to make these paths more user-friendly. For example:
+Use `rewrite` option to rewrite provided paths as well as paths in `whitelist` and `populate`. This is useful when you allow API clients to supply population paths (e.g. via query string) and want to make these paths more user-friendly. For example:
 
 ```javascript
 PostSchema.plugin(deepPopulate, {
@@ -127,31 +120,31 @@ post.deepPopulate(req.query.populate, cb);
 ```
 
 Finally, you can override the above plugin options when invoking `deepPopulate`.
- 
+
 ```javascript
 Post.deepPopulate(posts, paths, {
   whitelist: [],
-  rewrite: {},
-  populate: {}
+  populate: {},
+  rewrite: {}
 }, cb)
 
 post.deepPopulate(paths, {
   whitelist: [],
-  rewrite: {},
-  populate: {}
+  populate: {},
+  rewrite: {}
 }, cb);
 
 Post.find({}).deepPopulate(paths, {
   whitelist: [],
-  rewrite: {},
-  populate: {}
+  populate: {},
+  rewrite: {}
 }).exec(cb)
 ```
 
 
 ### Test
 
-To run tests, execute the following command. Note that you need a test database (don't reuse an existing database as the test will drop it every run).
+The test suite will **drop the database** each run, so only run it against a test database. To run tests, execute this command where `--db` is the connection string.
 
 ```
 gulp test --db mongodb://localhost/test_db
