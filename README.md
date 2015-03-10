@@ -152,6 +152,10 @@ gulp test --db mongodb://localhost/test_db
 
 ### Changelog
 
+#### v1.0.1
+
+* [Bug] Apply `lean` to populated documents
+
 #### v1.0.0
 
 * [Feature] Apply `rewrites` to `whitelist` and `populate`
@@ -159,7 +163,7 @@ gulp test --db mongodb://localhost/test_db
 #### v0.0.7
 
 * [Feature] Add `deepPopulate` to `Query`
-* [Feature] Support space dilimiter in paths
+* [Feature] Support space delimiter in paths
 
 #### v0.0.6
 

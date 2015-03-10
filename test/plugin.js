@@ -17,7 +17,7 @@ describe('mongoose-deep-populate', function () {
   describe('[static] Specific behaviors', function () {
     before(setup)
 
-    it('passes through null or empty documents', function (cb) {
+    it('passes through null or empty document array', function (cb) {
       async.parallel([
         function (cb) {
           Post.deepPopulate(null, 'comments', function (err, docs) {
@@ -78,7 +78,7 @@ describe('mongoose-deep-populate', function () {
     before(setup)
 
     it('passes in undefined if no document is found', function (cb) {
-      async.waterfall([
+      async.parallel([
         function (cb) {
           Post.find({_id: 'not exist'}).deepPopulate('comments').exec(function (err, docs) {
             expect(docs).to.be.undefined
@@ -100,21 +100,33 @@ describe('mongoose-deep-populate', function () {
       ], cb)
     })
 
-    it('works with lean() as an example of Query method chaining', function (cb) {
+    it('supports `lean` query option', function (cb) {
       async.parallel([
         function withoutLean(cb) {
-          Post.findOne({}).deepPopulate('comments').exec(function (err, doc) {
-            expect(doc.constructor.name).to.equal('model')
-            cb()
+          Post.findOne({}).deepPopulate('user comments').exec(function (err, doc) {
+            checkType(doc, 'model', cb)
           })
         },
         function withLean(cb) {
-          Post.findOne({}).deepPopulate('comments').lean().exec(function (err, doc) {
-            expect(doc.constructor.name).to.equal('Object')
-            cb()
+          Post.findOne({}).deepPopulate('user comments').lean().exec(function (err, doc) {
+            checkType(doc, 'Object', cb)
+          })
+        },
+        function withLeanInvokedBeforeDeepPopulate(cb) {
+          Post.findOne({}).lean().deepPopulate('user comments').exec(function (err, doc) {
+            checkType(doc, 'Object', cb)
           })
         },
       ], cb)
+
+      function checkType(doc, expectedType, cb) {
+        expect(doc.constructor.name).to.equal(expectedType)
+        expect(doc.user.constructor.name).to.equal(expectedType)
+        doc.comments.forEach(function (comment) {
+          expect(comment.constructor.name).to.equal(expectedType)
+        })
+        cb()
+      }
     })
   })
 
