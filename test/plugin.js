@@ -105,12 +105,14 @@ describe('mongoose-deep-populate', function () {
         function withoutLean(cb) {
           Post.findOne({}).deepPopulate('comments').exec(function (err, doc) {
             expect(doc.constructor.name).to.equal('model')
+            expect(doc.comments[0].constructor.name).to.equal('model')
             cb()
           })
         },
         function withLean(cb) {
           Post.findOne({}).deepPopulate('comments').lean().exec(function (err, doc) {
             expect(doc.constructor.name).to.equal('Object')
+            expect(doc.comments[0].constructor.name).to.equal('Object')
             cb()
           })
         },
