@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/buunguyen/mongoose-deep-populate.svg?branch=master)](https://travis-ci.org/buunguyen/mongoose-deep-populate)
+
 By default, Mongoose only supports populating nested models at one level of depth. This plugin makes it very simple to populate nested models at any level of depth.
 
 ### Installation
