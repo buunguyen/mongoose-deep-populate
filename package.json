@@ -20,6 +20,9 @@
     "documents population"
   ],
   "main": "index.js",
+  "scripts": {
+    "test": "gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/buunguyen/mongoose-deep-populate"

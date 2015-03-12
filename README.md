@@ -147,7 +147,7 @@ Post.find({}).deepPopulate(paths, {
 The test suite will **drop the database** each run, so only run it against a test database. To run tests, execute this command where `--db` is the connection string.
 
 ```
-gulp test --db mongodb://localhost/test_db
+gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 ```
 
 ### Changelog
