@@ -121,7 +121,9 @@ PostSchema.plugin(deepPopulate, {
 post.deepPopulate(req.query.populate, cb);  
 ```
 
-Finally, you can override the above plugin options when invoking `deepPopulate`.
+##### Overriding options
+
+You can override the above plugin options when invoking `deepPopulate`.
 
 ```javascript
 Post.deepPopulate(posts, paths, {
