@@ -2,9 +2,51 @@ var _            = require('lodash')
   , expect       = require('chai').expect
   , async        = require('async')
   , mongoose     = require('mongoose')
+  , Schema       = mongoose.Schema
   , deepPopulate = require('../index')
 
 describe('mongoose-deep-populate', function () {
+
+
+  /*==============================================*
+   * Bugs
+   *==============================================*/
+  describe('Bugs', function () {
+    it('bug #12', function (cb) {
+      var dbUrl = process.env.TEST_DB
+        , connection = mongoose.createConnection(dbUrl)
+
+      var UserSchema = new Schema({
+        items: [{ type: Schema.Types.ObjectId, ref: 'Item.bug12' }]
+      })
+      UserSchema.plugin(deepPopulate)
+      var User = connection.model('User.bug12', UserSchema)
+
+      var ItemSchema = new Schema({
+        seller: { type: Schema.Types.ObjectId, ref: 'User.bug12' }
+      })
+      ItemSchema.plugin(deepPopulate)
+      var Item = connection.model('Item.bug12', ItemSchema)
+
+      var user = new User()
+      var item = new Item({seller: user})
+      user.items.addToSet(item)
+
+      user.save(function (err) {
+        if (err) return cb(err)
+        item.save(function (err) {
+          if (err) return cb(err)
+          user.deepPopulate('items.seller', function (err) {
+            if (err) return cb(err)
+            expect(user.equals(user.items[0].seller))
+            cb()
+          })
+        })
+      })
+    })
+  })
+
+
 
   var UserSchema, User
     , CommentSchema, Comment
@@ -153,6 +195,17 @@ describe('mongoose-deep-populate', function () {
             check(comment, true)
             check(comment.user, true)
             check(comment.user.manager, true)
+          })
+          cb()
+        })
+      })
+
+      it('deeply populates a document array which link back to original model', function (cb) {
+        populateFn('reviewers.mainPage', null, function (err, post) {
+          if (err) return cb(err)
+          post.reviewers.forEach(function (reviewer) {
+            check(reviewer, true)
+            check(reviewer.mainPage, true)
           })
           cb()
         })
@@ -373,14 +426,14 @@ describe('mongoose-deep-populate', function () {
    * Helpers
    *==============================================*/
   function setup(cb, options) {
-    var Schema = mongoose.Schema
-      , dbUrl = process.env.TEST_DB
+    var dbUrl = process.env.TEST_DB
       , connection = mongoose.createConnection(dbUrl)
       , modelVersion = ++nextModelVersion
 
     UserSchema = new Schema({
       _id    : Number,
       manager: {type: Number, ref: 'User' + modelVersion},
+      mainPage: {type: Number, ref: 'Post' + modelVersion},
       loaded : {type: Boolean, default: true}
     })
     User = connection.model('User' + modelVersion, UserSchema)
@@ -396,6 +449,7 @@ describe('mongoose-deep-populate', function () {
       _id     : Number,
       loaded  : {type: Boolean, default: true},
       user    : {type: Number, ref: 'User' + modelVersion}, // linked doc
+      reviewers : [{type: Number, ref: 'User' + modelVersion}], // linked docs
       comments: [{type: Number, ref: 'Comment' + modelVersion}], // linked docs
       likes   : [{user: {type: Number, ref: 'User' + modelVersion}}], // subdocs
       approved: {status: Boolean, user: {type: Number, ref: 'User' + modelVersion}} // subdoc
@@ -404,13 +458,13 @@ describe('mongoose-deep-populate', function () {
     Post = connection.model('Post' + modelVersion, PostSchema)
 
     async.parallel([
-      User.create.bind(User, {_id: 1, manager: 2}),
-      User.create.bind(User, {_id: 2}),
+      User.create.bind(User, {_id: 1, manager: 2, mainPage: 1}),
+      User.create.bind(User, {_id: 2, mainPage: 2}),
       Comment.create.bind(Comment, {_id: 1, user: 1}),
       Comment.create.bind(Comment, {_id: 2, user: 1}),
       Comment.create.bind(Comment, {_id: 3, user: 1}),
-      Post.create.bind(Post, {_id: 1, user: 1, comments: [1, 2], likes: [{user: 1}], approved: {user: 1}}),
-      Post.create.bind(Post, {_id: 2, user: 1, comments: [3], likes: [{user: 1}], approved: {user: 1}})
+      Post.create.bind(Post, {_id: 1, user: 1, reviewers: [1, 2], comments: [1, 2], likes: [{user: 1}], approved: {user: 1}}),
+      Post.create.bind(Post, {_id: 2, user: 1, reviewers: [1, 2], comments: [3], likes: [{user: 1}], approved: {user: 1}})
     ], cb)
   }
 

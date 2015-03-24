@@ -156,6 +156,10 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 
 ### Changelog
 
+#### v1.0.2
+
+* [Bug] Fix bug happening when Mongoose#populate does not infer the expected schema
+
 #### v1.0.1
 
 * [Bug] Apply `lean` to populated documents
