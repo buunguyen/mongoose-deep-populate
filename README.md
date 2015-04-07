@@ -156,6 +156,10 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 
 ### Changelog
 
+#### v1.1.0
+
+* [Feature] Make mongoose a peer dependency to enforce supported versions
+
 #### v1.0.2
 
 * [Bug] Fix bug happening when Mongoose#populate does not infer the expected schema
