@@ -46,6 +46,7 @@
     "gulp-mocha": "^2.0.0",
     "jshint-stylish": "^1.0.1",
     "lodash": "^3.4.0",
-    "minimist": "^1.1.0"
+    "minimist": "^1.1.0",
+    "mongoose": "^3.8.0"
   }
 }
