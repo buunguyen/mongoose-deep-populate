@@ -1,6 +1,6 @@
 {
   "name": "mongoose-deep-populate",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Mongoose plugin to enable deep population of nested models",
   "keywords": [
     "mongo",
@@ -33,9 +33,6 @@
     "url": "https://github.com/buunguyen/mongoose-deep-populate/issues"
   },
   "homepage": "https://github.com/buunguyen/mongoose-deep-populate",
-  "peerDependencies": {
-    "mongoose": ">=3.6.0"
-  },
   "devDependencies": {
     "async": "^0.9.0",
     "chai": "^2.1.1",

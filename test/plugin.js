@@ -3,7 +3,7 @@ var _            = require('lodash')
   , async        = require('async')
   , mongoose     = require('mongoose')
   , Schema       = mongoose.Schema
-  , deepPopulate = require('../index')
+  , deepPopulate = require('../index')(mongoose)
 
 describe('mongoose-deep-populate', function () {
 
