@@ -2,6 +2,8 @@
 
 By default, Mongoose only supports populating nested models at one level of depth. This plugin makes it very simple to populate nested models at any level of depth.
 
+Support Mongoose 3.8.x and later.
+
 ### Installation
 ```
 npm install mongoose-deep-populate
