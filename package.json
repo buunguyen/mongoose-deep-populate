@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/buunguyen/mongoose-deep-populate",
   "peerDependencies": {
-    "mongoose": ">=3.6.0"
+    "mongoose": ">=3.8.0"
   },
   "devDependencies": {
     "async": "^0.9.0",
