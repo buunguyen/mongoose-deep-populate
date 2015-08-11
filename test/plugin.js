@@ -12,34 +12,77 @@ describe('mongoose-deep-populate', function () {
    * Bugs
    *==============================================*/
   describe('Bugs', function () {
-    it('bug #12', function (cb) {
-      var dbUrl = process.env.TEST_DB
-        , connection = mongoose.createConnection(dbUrl)
+    describe('Bug #23', function () {
+      var MPromise = mongoose.Promise
 
-      var UserSchema = new Schema({
-        items: [{ type: Schema.Types.ObjectId, ref: 'Item.bug12' }]
+      before(function () {
+        mongoose.Promise = require('q').Promise
       })
-      UserSchema.plugin(deepPopulate)
-      var User = connection.model('User.bug12', UserSchema)
 
-      var ItemSchema = new Schema({
-        seller: { type: Schema.Types.ObjectId, ref: 'User.bug12' }
+      after(function () {
+        mongoose.Promise = MPromise
       })
-      ItemSchema.plugin(deepPopulate)
-      var Item = connection.model('Item.bug12', ItemSchema)
 
-      var user = new User()
-      var item = new Item({seller: user})
-      user.items.addToSet(item)
+      it('fixes bug #23', function (cb) {
+        var dbUrl = process.env.TEST_DB
+          , connection = mongoose.createConnection(dbUrl)
 
-      user.save(function (err) {
-        if (err) return cb(err)
-        item.save(function (err) {
+        var FooSchema = new Schema({
+          name: String
+        })
+        var Foo = connection.model('Foo', FooSchema)
+
+        var BarSchema = new Schema({
+          foo: { type: Schema.Types.ObjectId, ref: 'Foo' },
+        })
+        var Bar = connection.model('Bar', BarSchema)
+
+        BarSchema.plugin(deepPopulate)
+
+        var foo = new Foo({ name: 'foo' })
+        var bar = new Bar({ foo: foo._id })
+
+        var promise = foo.save().then(function () {
+          return bar.save()
+        }).then(function () {
+          return Bar.findOne({ _id: bar._id }).deepPopulate('foo')
+        }).then(function (bar) {
+          expect(bar.foo.name).to.equal(foo.name)
+          cb()
+        }, cb)
+      })
+    })
+
+    describe('Bug #12', function () {
+      it('fixes bug #12', function (cb) {
+        var dbUrl = process.env.TEST_DB
+          , connection = mongoose.createConnection(dbUrl)
+
+        var UserSchema = new Schema({
+          items: [{ type: Schema.Types.ObjectId, ref: 'Item.bug12' }]
+        })
+        UserSchema.plugin(deepPopulate)
+        var User = connection.model('User.bug12', UserSchema)
+
+        var ItemSchema = new Schema({
+          seller: { type: Schema.Types.ObjectId, ref: 'User.bug12' }
+        })
+        ItemSchema.plugin(deepPopulate)
+        var Item = connection.model('Item.bug12', ItemSchema)
+
+        var user = new User()
+        var item = new Item({seller: user})
+        user.items.addToSet(item)
+
+        user.save(function (err) {
           if (err) return cb(err)
-          user.deepPopulate('items.seller', function (err) {
+          item.save(function (err) {
             if (err) return cb(err)
-            expect(user.equals(user.items[0].seller))
-            cb()
+            user.deepPopulate('items.seller', function (err) {
+              if (err) return cb(err)
+              expect(user.equals(user.items[0].seller))
+              cb()
+            })
           })
         })
       })

@@ -31,7 +31,8 @@ var PostSchema = new Schema({
 #### Register plugin
 
 ```javascript
-var deepPopulate = require('mongoose-deep-populate')(mongoose); // note: must pass in mongoose instance
+// CHANGE from 1.x: need to pass in mongoose instance
+var deepPopulate = require('mongoose-deep-populate')(mongoose); 
 PostSchema.plugin(deepPopulate, options /* more on options below */);
 ```
 
@@ -161,6 +162,7 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 #### v2.0.0
 
 * [Breaking] Need a mongoose instance passed to the function returned by `require`
+* [Feature] Support mongoose promise provider
 
 #### v1.1.0
 
