@@ -4,6 +4,8 @@ By default, Mongoose only supports populating nested models at one level of dept
 
 Support Mongoose 3.8.x and later.
 
+**Note:** mongoose-deep-populate uses [semver](http://semver.org). Please refer to [changelog](https://github.com/buunguyen/mongoose-deep-populate#changelog) for breaking changes from one major version to the next.
+
 ### Installation
 ```
 npm install mongoose-deep-populate
@@ -32,7 +34,7 @@ var PostSchema = new Schema({
 
 ```javascript
 // CHANGE from 1.x: need to pass in mongoose instance
-var deepPopulate = require('mongoose-deep-populate')(mongoose); 
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
 PostSchema.plugin(deepPopulate, options /* more on options below */);
 ```
 
