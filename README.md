@@ -1,8 +1,10 @@
-Mongoose plugin to enable population of nested models at any level of depth. Support **Mongoose 3.8.x** and later. Refer to [changelog](https://github.com/buunguyen/mongoose-deep-populate#changelog) for breaking changes from one major version to the next.
+Mongoose plugin to enable population of nested models at any level of depth. Support **Mongoose 3.8.x** and later. Refer to [changelog](https://github.com/buunguyen/mongoose-deep-populate#changelog) for breaking changes.
 
 [![NPM](https://nodei.co/npm/mongoose-deep-populate.png?compact=true)](https://www.npmjs.com/package/mongoose-deep-populate)
 
-[![Build Status](https://travis-ci.org/buunguyen/mongoose-deep-populate.svg?branch=master)](https://travis-ci.org/buunguyen/mongoose-deep-populate) [![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/pr)](http://issuestats.com/github/buunguyen/mongoose-deep-populate) [![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/issue)](http://issuestats.com/github/buunguyen/mongoose-deep-populate)
+[![Build Status](https://travis-ci.org/buunguyen/mongoose-deep-populate.svg?branch=master)](https://travis-ci.org/buunguyen/mongoose-deep-populate)
+
+[![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/pr)](http://issuestats.com/github/buunguyen/mongoose-deep-populate) [![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/issue)](http://issuestats.com/github/buunguyen/mongoose-deep-populate)
 
 ### Usage
 
