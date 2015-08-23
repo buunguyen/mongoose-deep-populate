@@ -1,15 +1,8 @@
-[![Build Status](https://travis-ci.org/buunguyen/mongoose-deep-populate.svg?branch=master)](https://travis-ci.org/buunguyen/mongoose-deep-populate)
+Mongoose plugin to enable population of nested models at any level of depth. Support **Mongoose 3.8.x** and later. Refer to [changelog](https://github.com/buunguyen/mongoose-deep-populate#changelog) for breaking changes from one major version to the next.
 
-By default, Mongoose only supports populating nested models at one level of depth. This plugin makes it very simple to populate nested models at any level of depth.
+![Build Status](https://travis-ci.org/buunguyen/mongoose-deep-populate.svg?branch=master)](https://travis-ci.org/buunguyen/mongoose-deep-populate) ![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/pr)](http://issuestats.com/github/buunguyen/mongoose-deep-populate) ![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/issue)](http://issuestats.com/github/buunguyen/mongoose-deep-populate)
 
-Support Mongoose 3.8.x and later.
-
-**Note:** mongoose-deep-populate uses [semver](http://semver.org). Please refer to [changelog](https://github.com/buunguyen/mongoose-deep-populate#changelog) for breaking changes from one major version to the next.
-
-### Installation
-```
-npm install mongoose-deep-populate
-```
+![NPM](https://nodei.co/npm/mongoose-deep-populate.png?compact=true)](https://www.npmjs.com/package/mongoose-deep-populate)
 
 ### Usage
 
