@@ -263,6 +263,14 @@ describe('mongoose-deep-populate', function () {
         })
       })
 
+      it('deeply populates a subdocument within a linked document (bug #29)', function (cb) {
+        populateFn('approved.user.manager.mainPage.approved.user', null, function (err, post) {
+          if (err) return cb(err)
+          check(post.approved.user.manager.mainPage.approved.user, true)
+          cb()
+        })
+      })
+
       it('deeply populates a subdocument array', function (cb) {
         populateFn('likes.user.manager', null, function (err, post) {
           if (err) return cb(err)

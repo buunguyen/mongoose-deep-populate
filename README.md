@@ -154,6 +154,10 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 
 ### Changelog
 
+#### v2.0.2
+
+* [Bug] Fix bug populating subdocuments within linked documents
+
 #### v2.0.0
 
 * [Breaking] Need a mongoose instance passed to the function returned by `require`
