@@ -156,7 +156,7 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 
 #### v2.0.2
 
-* [Bug] Fix bug populating subdocuments within linked documents
+* [Bug] Fix bug populating when there is a subdocument within a linked document (see #29)
 
 #### v2.0.0
 
