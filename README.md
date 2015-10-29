@@ -154,6 +154,10 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 
 ### Changelog
 
+#### v2.0.3
+
+* [Bug] Fix bug cannot use native ES6 Promise
+
 #### v2.0.2
 
 * [Bug] Fix bug populating when there is a subdocument within a linked document (see #29)

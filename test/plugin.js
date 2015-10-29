@@ -12,11 +12,11 @@ describe('mongoose-deep-populate', function () {
    * Bugs
    *==============================================*/
   describe('Bugs', function () {
-    describe('Bug #23', function () {
+    describe('Bug #23 (Mongoose 4.1 and up only)', function () {
       var MPromise = mongoose.Promise
 
       before(function () {
-        mongoose.Promise = require('q').Promise
+        mongoose.Promise = Promise // ES6 Promise
       })
 
       after(function () {
