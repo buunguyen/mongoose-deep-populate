@@ -36,23 +36,33 @@ PostSchema.plugin(deepPopulate, options /* more on options below */);
 On `Post` model:
 
 ```javascript
+
+// Use callback
 Post.deepPopulate(posts, 'comments.user', function (err, _posts) {
   // _posts is the same instance as posts and provided for convenience
   posts.forEach(function (post) {
     // post.comments and post.comments.user are fully populated
   });
 });
+
+// Use promise
+Post.deepPopulate(posts, 'comments.user').then(...);
 ```
 
 On an instance of `Post`:
 
 ```javascript
+// Use callback
 post.deepPopulate('comments.user', function (err, _post) {
   // _post is the same instance as post and provided for convenience
 });
+
+
+// Use promise
+post.deepPopulate('comments.user').then(...);
 ```
 
-On `Query`:
+On `Query` (returns the same query object to chain):
 
 ```javascript
 Post.find().deepPopulate('comments.user').exec(function (err, posts) { ... });
@@ -153,6 +163,10 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 ```
 
 ### Changelog
+
+#### v3.0.0
+
+* [Feature] Return a promise when invoking `deepPopulate()` on model or model instance.
 
 #### v2.0.3
 

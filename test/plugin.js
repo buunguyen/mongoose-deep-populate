@@ -538,10 +538,24 @@ describe('mongoose-deep-populate', function () {
         })
       },
 
+      '[static-promise]': function (paths, options, cb) {
+        Post.find({}, function (err, posts) {
+          if (err) return cb(err)
+          Post.deepPopulate(posts, paths, options).then(doneFn(cb))
+        })
+      },
+
       '[instance]': function (paths, options, cb) {
         Post.findOne({}, function (err, post) {
           if (err) return cb(err)
           post.deepPopulate(paths, options, doneFn(cb))
+        })
+      },
+
+      '[instance-promise]': function (paths, options, cb) {
+        Post.findOne({}, function (err, post) {
+          if (err) return cb(err)
+          post.deepPopulate(paths, options).then(doneFn(cb))
         })
       },
 
