@@ -164,6 +164,11 @@ gulp test --db mongodb://127.0.0.1/mongoose_deep_populate_test_db
 
 ### Changelog
 
+
+#### v3.1.0
+
+* [Feature] Support Mongoose 5
+
 #### v3.0.0
 
 * [Feature] Return a promise when invoking `deepPopulate()` on model or model instance.

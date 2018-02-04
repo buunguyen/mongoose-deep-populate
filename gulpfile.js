@@ -7,7 +7,7 @@ gulp.task('default', ['test', 'jshint'])
 
 gulp.task('test', ['dropdb'], function () {
   return gulp.src('./test/**/*.js')
-             .pipe($.mocha({reporter: 'spec'}))
+             .pipe($.mocha({reporter: 'spec', timeout: 10000}))
              .pipe($.exit())
 })
 
