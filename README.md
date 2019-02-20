@@ -2,7 +2,8 @@ Mongoose plugin to enable population of nested models at any level of depth. Sup
 
 [![NPM](https://nodei.co/npm/mongoose-deep-populate.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/mongoose-deep-populate)
 
-[![Build Status](https://travis-ci.org/buunguyen/mongoose-deep-populate.svg?branch=master)](https://travis-ci.org/buunguyen/mongoose-deep-populate) [![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/pr)](http://issuestats.com/github/buunguyen/mongoose-deep-populate) [![Issue Stats](http://issuestats.com/github/buunguyen/mongoose-deep-populate/badge/issue)](http://issuestats.com/github/buunguyen/mongoose-deep-populate)
+[![Build Status](https://travis-ci.org/buunguyen/mongoose-deep-populate.svg?branch=master)](https://travis-ci.org/buunguyen/mongoose-deep-populate) 
+[![Code Shelter](https://www.codeshelter.co/static/badges/badge-flat.svg)](https://www.codeshelter.co/)
 
 ### Usage
 
