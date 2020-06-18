@@ -230,6 +230,15 @@ describe('mongoose-deep-populate', function () {
           cb()
         })
       })
+      
+      it('deeply populates a linked document and works with an async callback', function (cb) {
+        populateFn('user.manager', null, async function (err, post) {
+          if (err) return cb(err)
+          check(post.user, true)
+          check(post.user.manager, true)
+          cb()
+        })
+      })
 
       it('deeply populates a document array', function (cb) {
         populateFn('comments.user.manager', null, function (err, post) {
