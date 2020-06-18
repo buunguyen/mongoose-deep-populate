@@ -162,13 +162,6 @@ describe('mongoose-deep-populate', function () {
   describe('[query] Specific behaviors', function () {
     before(setup)
 
-    it('exec() works with async callbacks', function (cb) {
-      Post.find({_id: 'not exist'}).deepPopulate('comments').exec(async function (err, docs) {
-        expect(docs).to.be.undefined
-        cb()
-      })
-    })
-
     it('passes in undefined if no document is found', function (cb) {
       async.parallel([
         function (cb) {
@@ -231,6 +224,15 @@ describe('mongoose-deep-populate', function () {
 
       it('deeply populates a linked document', function (cb) {
         populateFn('user.manager', null, function (err, post) {
+          if (err) return cb(err)
+          check(post.user, true)
+          check(post.user.manager, true)
+          cb()
+        })
+      })
+      
+      it('deeply populates a linked document and works with an async callback', function (cb) {
+        populateFn('user.manager', null, async function (err, post) {
           if (err) return cb(err)
           check(post.user, true)
           check(post.user.manager, true)
